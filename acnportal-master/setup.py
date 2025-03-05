@@ -1,6 +1,8 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+file_path = "C:\\Users\\alene\\Virtual_environments\\ME44312-2\\Machine-Learning-AI-Assignment-ME44312\\acnportal-master\\README.md"
+
+with open(file_path, "r") as fh:
     long_description = fh.read()
 setuptools.setup(
     name="acnportal",

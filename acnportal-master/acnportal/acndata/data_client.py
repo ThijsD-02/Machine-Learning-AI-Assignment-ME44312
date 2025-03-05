@@ -134,3 +134,5 @@ class DataClient(object):
             return self.get_sessions(
                 site, condition, sort="connectionTime", timeseries=timeseries
             )
+
+DataClient.count_sessions("GNt_9i_j_ON9GbmnuwDYQ6e95CKX-yd79l_vwEOMjtA")

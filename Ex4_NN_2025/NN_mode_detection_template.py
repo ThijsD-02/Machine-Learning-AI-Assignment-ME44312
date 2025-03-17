@@ -16,7 +16,7 @@ import time
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 
-db = pd.read_csv('modes.csv')
+db = pd.read_csv('Ex4_NN_2025/modes.csv')
 
 
 # %% Training and test data split: Splitting the dataset into training, validation, and test data set using 60:20:20 split for train: validation: test.

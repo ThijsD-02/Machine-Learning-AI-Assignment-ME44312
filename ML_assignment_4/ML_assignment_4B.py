@@ -13,7 +13,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
-db = pd.read_csv('data/modes.csv')
+db = pd.read_csv('ML_assignment_4/modes.csv')
+print(db.head())
 
 X = db[['xmin', 'ymin', 'zmin', 'xmean', 'ymean', 'zmean', 'xstd', 'ystd', 'zstd']].values
 X

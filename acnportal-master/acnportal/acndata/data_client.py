@@ -2,7 +2,7 @@ from typing import Optional
 
 import requests
 from datetime import datetime
-from .utils import parse_dates, http_date
+from utils import parse_dates, http_date
 
 
 class DataClient(object):

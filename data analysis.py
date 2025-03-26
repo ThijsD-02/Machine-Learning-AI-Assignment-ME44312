@@ -1,105 +1,76 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 
-<<<<<<< HEAD
+# Load the CSV files
 df1 = pd.read_csv("Data/acndata_sessions 2019_11 till 2020_5 caltech.csv")
 df2 = pd.read_csv("Data/acndata_sessions 2019_11 till 2020_5 jpl.csv")
 df3 = pd.read_csv("Data/acndata_sessions 2019_11 till 2020_5 office1.csv")
 
-frequency = df1['userID'].value_counts()
-print(frequency)
-
-frequency2 = df2['userID'].value_counts()
-print(frequency2)
-
-frequency3 = df3['userID'].value_counts()
-print(frequency3)
-
-frequency.plot(kind="bar")
-
-plt.show()
-
-
-
-
-=======
-# Load the CSV into a DataFrame
-df = pd.read_csv('Data/acndata_sessions 2019_11 till 2020_5 caltech.csv')
-
-# Load the three CSV files
-df1 = pd.read_csv('Data/acndata_sessions 2019_11 till 2020_5 caltech.csv')
-df2 = pd.read_csv('Data/acndata_sessions 2019_11 till 2020_5 jpl.csv')
-df3 = pd.read_csv('Data/acndata_sessions 2019_11 till 2020_5 office1.csv')
-
-# Function to process each dataset
+# Function to process data
 def process_data(df):
+    # Convert to datetime
     df[['connectionTime', 'doneChargingTime', 'disconnectTime']] = df[
         ['connectionTime', 'doneChargingTime', 'disconnectTime']
     ].apply(pd.to_datetime, errors='coerce')
 
+    # Calculate durations
     df['chargingDuration'] = (df['doneChargingTime'] - df['connectionTime']).dt.total_seconds() / 60
     df['stayingDuration'] = (df['disconnectTime'] - df['connectionTime']).dt.total_seconds() / 60
-    df['nonuseDuration'] = (df['stayingDuration'] - df['chargingDuration'])
-    return df.dropna(subset=['chargingDuration', 'stayingDuration', 'nonuseDuration', 'kWhDelivered'])
+    df['nonuseDuration'] = df['stayingDuration'] - df['chargingDuration']
+    
+    # Convert connectionTime to PDT
+    df['connectionTime_PDT'] = df['connectionTime'].dt.tz_localize('UTC').dt.tz_convert('America/Los_Angeles')
+    df['arrivalMinutes'] = df['connectionTime_PDT'].dt.hour * 60 + df['connectionTime_PDT'].dt.minute
+    df['arrivalDate'] = df['connectionTime_PDT'].dt.date  # Extract arrival date
 
-# Process all datasets efficiently
-datasets = [df1, df2, df3]
-df1, df2, df3 = [process_data(df) for df in datasets]
+    return df.dropna(subset=['chargingDuration', 'stayingDuration', 'nonuseDuration', 'kWhDelivered', 'arrivalMinutes'])
 
-# Create scatter plot
-plt.figure(figsize=(12, 6))
-plt.scatter(df1['chargingDuration'], df1['kWhDelivered'], color='b', s=10, alpha=0.7, label="Caltech")
-plt.scatter(df2['chargingDuration'], df2['kWhDelivered'], color='r', s=10, alpha=0.7, label="JPL")
-plt.scatter(df3['chargingDuration'], df3['kWhDelivered'], color='g', s=10, alpha=0.7, label="Office 1")
+# Process all datasets
+df1, df2, df3 = [process_data(df) for df in [df1, df2, df3]]
 
-# Set limits and labels
-plt.xlim(0, 2000)  # Limit x-axis to 2000 minutes
-plt.xlabel('Charging Duration (Minutes)')
-plt.ylabel('kWh Delivered')
-plt.title('Charging Duration vs kWh Delivered')
+# Define colors
+colors = {'Caltech': 'blue', 'JPL': 'red', 'Office1': 'green'}
 
-#Add grid and legend
-plt.grid(True, linestyle='--', alpha=0.7)
-plt.legend()
+# Helper function to create scatter plots
+def plot_scatter(x, y, xlabel, ylabel, title):
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.scatter(df1[x], df1[y], color=colors['Caltech'], s=5, alpha=0.7, label="Caltech")
+    ax.scatter(df2[x], df2[y], color=colors['JPL'], s=5, alpha=0.7, label="JPL")
+    ax.scatter(df3[x], df3[y], color=colors['Office1'], s=5, alpha=0.7, label="Office 1")
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    ax.legend()
+    ax.grid(True, linestyle='--', alpha=0.5)
+    return fig, ax
 
-#Show the plot
+# Plot 1: Arrival Time vs. Staying Duration
+fig1, ax1 = plot_scatter('arrivalMinutes', 'stayingDuration', 'Arrival time (PT)', 'Staying time (minutes)', 'Arrival time against duration of stay')
+ax1.set_xticks(range(0, 1441, 120))
+ax1.set_xticklabels([f"{h:02d}:00" for h in range(0, 25, 2)])
+ax1.set_ylim(-75, 2000)
+
+# Plot 2: Charging Duration vs kWh Delivered
+fig2, ax2 = plot_scatter('chargingDuration', 'kWhDelivered', 'Charging time (minutes)', 'kWh Delivered', 'Charging duration against energy delivered')
+ax2.set_xlim(0, 2000)
+
+# Plot 3: Staying Duration vs kWh Delivered
+fig3, ax3 = plot_scatter('stayingDuration', 'kWhDelivered', 'Stay time (minutes)', 'kWh Delivered', 'Durations of stay against energy delivered')
+ax3.set_xlim(0, 2000)
+
+# Plot 4: Non-use Duration vs kWh Delivered
+fig4, ax4 = plot_scatter('nonuseDuration', 'kWhDelivered', 'Non-use stay time (minutes)', 'kWh Delivered', 'Non-use staying time against energy delivered')
+ax4.set_xlim(0, 2000)
+
+# Plot 5: Arrival Time vs kWh Delivered
+fig5, ax5 = plot_scatter('arrivalMinutes', 'kWhDelivered', 'Arrival time (PT)', 'kWh Delivered', 'Arrival time against energy delivered')
+ax5.set_xticks(range(0, 1441, 120))
+ax5.set_xticklabels([f"{h:02d}:00" for h in range(0, 25, 2)])
+
+# Plot 6: Arrival Date vs kWh Delivered
+fig6, ax6 = plot_scatter('arrivalDate', 'kWhDelivered', 'Arrival date', 'kWh Delivered', 'Arrival date against energy delivered')
+
+# Show all plots
 plt.show()
-
-# Create scatter plot
-plt.figure(figsize=(12, 6))
-plt.scatter(df1['stayingDuration'], df1['kWhDelivered'], color='lightblue', s=10, alpha=0.7, label="Caltech stay")
-plt.scatter(df2['stayingDuration'], df2['kWhDelivered'], color='orange', s=10, alpha=0.7, label="JPL stay")
-plt.scatter(df3['stayingDuration'], df3['kWhDelivered'], color='lightgreen', s=10, alpha=0.7, label="Office 1 stay")
-
-# Set limits and labels
-plt.xlim(0, 4000)  # Limit x-axis to 2000 minutes
-plt.xlabel('Staying Duration (Minutes)')
-plt.ylabel('kWh Delivered')
-plt.title('Staying Duration vs kWh Delivered')
-
-# Add grid and legend
-plt.grid(True, linestyle='--', alpha=0.7)
-plt.legend()
-
-# Show the plot
-plt.show()
-
-# Create scatter plot
-plt.figure(figsize=(12, 6))
-plt.scatter(df1['nonuseDuration'], df1['kWhDelivered'], color='darkblue', s=10, alpha=0.7, label="Caltech non use")
-plt.scatter(df2['nonuseDuration'], df2['kWhDelivered'], color='yellow', s=10, alpha=0.7, label="JPL non use")
-plt.scatter(df3['nonuseDuration'], df3['kWhDelivered'], color='darkgreen', s=10, alpha=0.7, label="Office 1 non use")
-
-# Set limits and labels
-plt.xlim(0, 2000)  # Limit x-axis to 2000 minutes
-plt.xlabel('Non-use Duration (Minutes)')
-plt.ylabel('kWh Delivered')
-plt.title('Non-use Duration vs kWh Delivered')
-
-# Add grid and legend
-plt.grid(True, linestyle='--', alpha=0.7)
-plt.legend()
-
-# Show the plot
-plt.show()
->>>>>>> b828a1128c53aa1b901d1e0a1368da4f843b6628

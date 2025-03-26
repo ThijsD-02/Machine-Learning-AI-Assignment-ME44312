@@ -47,7 +47,7 @@ def plot_scatter(x, y, xlabel, ylabel, title):
     return fig, ax
 
 # Plot 1: Arrival Time vs. Staying Duration
-fig1, ax1 = plot_scatter('arrivalMinutes', 'stayingDuration', 'Arrival time (PDT)', 'Staying time (minutes)', 'Arrival time against duration of stay')
+fig1, ax1 = plot_scatter('arrivalMinutes', 'stayingDuration', 'Arrival time (PT)', 'Staying time (minutes)', 'Arrival time against duration of stay')
 ax1.set_xticks(range(0, 1441, 120))
 ax1.set_xticklabels([f"{h:02d}:00" for h in range(0, 25, 2)])
 ax1.set_ylim(-75, 2000)
@@ -65,7 +65,7 @@ fig4, ax4 = plot_scatter('nonuseDuration', 'kWhDelivered', 'Non-use stay time (m
 ax4.set_xlim(0, 2000)
 
 # Plot 5: Arrival Time vs kWh Delivered
-fig5, ax5 = plot_scatter('arrivalMinutes', 'kWhDelivered', 'Arrival time (PDT)', 'kWh Delivered', 'Arrival time against energy delivered')
+fig5, ax5 = plot_scatter('arrivalMinutes', 'kWhDelivered', 'Arrival time (PT)', 'kWh Delivered', 'Arrival time against energy delivered')
 ax5.set_xticks(range(0, 1441, 120))
 ax5.set_xticklabels([f"{h:02d}:00" for h in range(0, 25, 2)])
 

@@ -1,12 +1,24 @@
+'''
+This script produces plots to analyse data from the diffent locations and are discussed in section 3 of the paper.
+
+The following plots where made: 
+- Arrival Time vs. Staying Duration
+- Charging Duration vs kWh Delivered 
+- Staying Duration vs kWh Delivered
+- Non-use Duration vs kWh Delivered
+- Arrival Time vs kWh Delivered
+- Arrival Date vs kWh Delivered
+'''
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
 # Load the CSV files
-df1 = pd.read_csv("Data/acndata_sessions 2019_11 till 2020_5 caltech.csv")
-df2 = pd.read_csv("Data/acndata_sessions 2019_11 till 2020_5 jpl.csv")
-df3 = pd.read_csv("Data/acndata_sessions 2019_11 till 2020_5 office1.csv")
+df1 = pd.read_csv("Raw data/acndata_sessions 2019_11 till 2020_5 caltech.csv")
+df2 = pd.read_csv("Raw data/acndata_sessions 2019_11 till 2020_5 jpl.csv")
+df3 = pd.read_csv("Raw data/acndata_sessions 2019_11 till 2020_5 office1.csv")
 
 # Function to process data
 def process_data(df):

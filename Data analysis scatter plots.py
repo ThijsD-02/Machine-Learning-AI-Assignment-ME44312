@@ -16,9 +16,9 @@ import numpy as np
 import seaborn as sns
 
 # Load the CSV files
-df1 = pd.read_csv("Raw data/acndata_sessions 2019_11 till 2020_5 caltech.csv")
-df2 = pd.read_csv("Raw data/acndata_sessions 2019_11 till 2020_5 jpl.csv")
-df3 = pd.read_csv("Raw data/acndata_sessions 2019_11 till 2020_5 office1.csv")
+df1 = pd.read_csv("Data/acndata_sessions 2019_11 till 2020_5 caltech.csv")
+df2 = pd.read_csv("Data/acndata_sessions 2019_11 till 2020_5 jpl.csv")
+df3 = pd.read_csv("Data/acndata_sessions 2019_11 till 2020_5 office1.csv")
 
 # Function to process data
 def process_data(df):
